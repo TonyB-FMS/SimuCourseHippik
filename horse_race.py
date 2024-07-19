@@ -1,18 +1,15 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
+import random
+import unicodedata
 
 """
 Module: Trot Race Simulation
 
 Description:
-    This module simulates a trot race with multiple horses. It allows users to select the type of race (Tiercé, Quarté,
-    or Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls.
-    The program displays the current standings and the results once the race is complete.
+    This module simulates a trot race with multiple horses. It allows users to select the type of race (Tiercé, Quarté, or Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
 
 Author(s):
-    [Name]
-    [Email]
+    [Your Name]
+    [Your Email]
 
 Date:
     [Date]
@@ -21,16 +18,12 @@ License:
     This software is licensed under the [License Name] License. See the LICENSE file for details.
 
 Usage:
-    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number
-    of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
+    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
 
 Dependencies:
     - random
     - unicodedata
 """
-
-import random
-import unicodedata
 
 # Table for speed changes based on dice roll and current speed
 SPEED_CHANGE = {
@@ -54,10 +47,11 @@ DISTANCE_BY_SPEED = {
     6: 138
 }
 
-# Table for horses names to be randomly used
-HORSES_NAMES = {
-
-}
+HORSE_NAMES = [
+    "Alezan", "Blaze", "Clover", "Duchess", "Eclipse", "Fury", "Ginger", "Hurricane", "Ivy", "Jasmine",
+    "Knight", "Lucky", "Majesty", "Noble", "Orion", "Pepper", "Quicksilver", "Ruby", "Starlight", "Thunder",
+    "Uno", "Victory", "Whirlwind", "Xena", "Yankee", "Zephyr"
+]
 
 
 def get_race_type():
@@ -106,11 +100,11 @@ def display_ranking(horses, race_type):
         horses (list): The list of Horse objects.
         race_type (str): The type of race to determine the number of winners to display.
     """
-    sorted_horses = sorted([horse for horse in horses if not horse.disqualified], key=lambda x: x.distance_covered,
-                           reverse=True)
+    sorted_horses = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
     num_winners = {'tiercé': 3, 'quarté': 4, 'quinté': 5}.get(race_type, 0)
+
     print("\nClassement actuel:")
-    for horse in sorted_horses[:num_winners]:
+    for horse in sorted_horses:
         print(horse)
     print()
 
@@ -195,25 +189,30 @@ def main():
     num_horses = get_number_of_horses()
     race_type = get_race_type()
 
-    horses = [Horse(f"Cheval {i + 1}") for i in range(num_horses)]
+    horse_names = random.sample(HORSE_NAMES, num_horses)
+    horses = [Horse(name) for name in horse_names]
 
     time_elapsed = 0
     finish_line = 2400
+    winners = []
 
-    while True:
+    while len(winners) < {'tiercé': 3, 'quarté': 4, 'quinté': 5}[race_type]:
         input("Appuyez sur n'importe quelle touche pour avancer d'un tour...")
 
         for horse in horses:
-            horse.update_speed()
-            horse.advance()
+            if horse not in winners:
+                horse.update_speed()
+                horse.advance()
 
         time_elapsed += 10
         print(f"\nTemps écoulé: {time_elapsed // 60}m {time_elapsed % 60}s")
 
-        display_ranking(horses, race_type)
+        horses_sorted = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
+        for horse in horses_sorted:
+            if horse.distance_covered >= finish_line and horse not in winners:
+                winners.append(horse)
 
-        if any(horse.distance_covered >= finish_line and not horse.disqualified for horse in horses):
-            break
+        display_ranking(horses, race_type)
 
     print("\nLa course est terminée!")
     display_ranking(horses, race_type)
