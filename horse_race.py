@@ -93,22 +93,22 @@ def get_number_of_horses():
             print("Entrée invalide. Veuillez entrer un nombre.")
 
 
-def display_ranking(horses, race_type, final=False):
+def display_ranking(horses, race_type, winners=None):
     """
     Display the ranking of horses based on their distance covered.
 
     Args:
         horses (list): The list of Horse objects.
         race_type (str): The type of race to determine the number of winners to display.
-        final (bool): Whether this is the final ranking after the race is finished.
+        winners (list): The list of winning horses in order of their arrival.
     """
     sorted_horses = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
     num_winners = {'tiercé': 3, 'quarté': 4, 'quinté': 5}.get(race_type, 0)
 
-    if final:
+    if winners is not None:
         print("\nClassement des gagnants:")
-        for i in range(num_winners):
-            print(f"{i + 1}. {sorted_horses[i].name}: {sorted_horses[i].distance_covered} mètres")
+        for i, winner in enumerate(winners):
+            print(f"{i + 1}. {winner.name}: {winner.distance_covered} mètres")
     else:
         print("\nClassement actuel:")
         for horse in sorted_horses:
@@ -214,15 +214,14 @@ def main():
         time_elapsed += 10
         print(f"\nTemps écoulé: {time_elapsed // 60}m {time_elapsed % 60}s")
 
-        horses_sorted = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
-        for horse in horses_sorted:
+        for horse in horses:
             if horse.distance_covered >= finish_line and horse not in winners:
                 winners.append(horse)
 
         display_ranking(horses, race_type)
 
     print("\nLa course est terminée!")
-    display_ranking(horses, race_type, final=True)
+    display_ranking(horses, race_type, winners)
 
 
 if __name__ == "__main__":
