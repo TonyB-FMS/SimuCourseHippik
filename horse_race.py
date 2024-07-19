@@ -5,10 +5,7 @@ import unicodedata
 Module: Trot Race Simulation
 
 Description:
-    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé,
-     2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements 
-     based on dice rolls. 
-     The program displays the current standings and the results once the race is complete.
+    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
 
 Author(s):
     [Your Name]
@@ -21,8 +18,7 @@ License:
     This software is licensed under the [License Name] License. See the LICENSE file for details.
 
 Usage:
-    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number 
-    of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
+    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
 
 Dependencies:
     - random
@@ -112,7 +108,7 @@ def display_ranking(horses, race_type, final=False):
     if final:
         print("\nClassement des gagnants:")
         for i in range(num_winners):
-            print(f"{i + 1}. {sorted_horses[i]}")
+            print(f"{i + 1}. {sorted_horses[i].name}: {sorted_horses[i].distance_covered} mètres")
     else:
         print("\nClassement actuel:")
         for horse in sorted_horses:
