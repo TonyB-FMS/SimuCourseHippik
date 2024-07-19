@@ -5,7 +5,7 @@ import unicodedata
 Module: Trot Race Simulation
 
 Description:
-    This module simulates a trot race with multiple horses. It allows users to select the type of race (Tiercé, Quarté, or Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
+    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
 
 Author(s):
     [Your Name]
@@ -92,20 +92,26 @@ def get_number_of_horses():
             print("Entrée invalide. Veuillez entrer un nombre.")
 
 
-def display_ranking(horses, race_type):
+def display_ranking(horses, race_type, final=False):
     """
     Display the ranking of horses based on their distance covered.
 
     Args:
         horses (list): The list of Horse objects.
         race_type (str): The type of race to determine the number of winners to display.
+        final (bool): Whether this is the final ranking after the race is finished.
     """
     sorted_horses = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
     num_winners = {'tiercé': 3, 'quarté': 4, 'quinté': 5}.get(race_type, 0)
 
-    print("\nClassement actuel:")
-    for horse in sorted_horses:
-        print(horse)
+    if final:
+        print("\nClassement des gagnants:")
+        for i in range(num_winners):
+            print(f"{i + 1}. {sorted_horses[i]}")
+    else:
+        print("\nClassement actuel:")
+        for horse in sorted_horses:
+            print(horse)
     print()
 
 
@@ -215,7 +221,7 @@ def main():
         display_ranking(horses, race_type)
 
     print("\nLa course est terminée!")
-    display_ranking(horses, race_type)
+    display_ranking(horses, race_type, final=True)
 
 
 if __name__ == "__main__":
