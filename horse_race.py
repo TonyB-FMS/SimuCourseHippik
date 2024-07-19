@@ -1,11 +1,13 @@
+import tkinter as tk
+from tkinter import messagebox
 import random
 import unicodedata
 
 """
-Module: Trot Race Simulation
+Module: Trot Race Simulation with Tkinter
 
 Description:
-    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
+    This module simulates a trot race with multiple horses using Tkinter for GUI. It allows users to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
 
 Author(s):
     [Your Name]
@@ -18,9 +20,10 @@ License:
     This software is licensed under the [License Name] License. See the LICENSE file for details.
 
 Usage:
-    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
+    Run this script to start the trot race simulation with a graphical interface. Follow the prompts to choose the type of race, enter the number of horses, and advance through the race. Press the "Next Round" button to simulate each round of the race.
 
 Dependencies:
+    - tkinter
     - random
     - unicodedata
 """
@@ -53,67 +56,6 @@ HORSE_NAMES = [
     "Uno", "Victory", "Whirlwind", "Xena", "Yankee", "Zephyr", "Arrow", "Bandit", "Champion", "Dancer",
     "Electra", "Falcon", "Galaxy", "Hero", "Inferno", "Jupiter", "King", "Legend", "Mystery", "Neptune"
 ]
-
-
-def get_race_type():
-    """
-    Prompt the user to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté).
-
-    Returns:
-        str: The race type selected by the user.
-    """
-    race_type_map = {
-        '1': 'tiercé',
-        '2': 'quarté',
-        '3': 'quinté'
-    }
-
-    while True:
-        race_choice = input("Choisissez le type de la course (1 pour Tiercé, 2 pour Quarté, 3 pour Quinté): ").strip()
-        normalized_choice = normalize_string(race_choice)
-        if normalized_choice in race_type_map:
-            return race_type_map[normalized_choice]
-        print("Choix invalide. Veuillez entrer '1' pour Tiercé, '2' pour Quarté, ou '3' pour Quinté.")
-
-
-def get_number_of_horses():
-    """
-    Prompt the user to enter the number of horses.
-
-    Returns:
-        int: The number of horses selected by the user.
-    """
-    while True:
-        try:
-            number = int(input("Entrez le nombre de chevaux (entre 12 et 20): "))
-            if 12 <= number <= 20:
-                return number
-            print("Nombre invalide. Veuillez entrer un nombre entre 12 et 20.")
-        except ValueError:
-            print("Entrée invalide. Veuillez entrer un nombre.")
-
-
-def display_ranking(horses, race_type, winners=None):
-    """
-    Display the ranking of horses based on their distance covered.
-
-    Args:
-        horses (list): The list of Horse objects.
-        race_type (str): The type of race to determine the number of winners to display.
-        winners (list): The list of winning horses in order of their arrival.
-    """
-    sorted_horses = sorted(horses, key=lambda x: x.distance_covered, reverse=True)
-    num_winners = {'tiercé': 3, 'quarté': 4, 'quinté': 5}.get(race_type, 0)
-
-    if winners is not None:
-        print("\nClassement des gagnants:")
-        for i, winner in enumerate(winners):
-            print(f"{i + 1}. {winner.name}: {winner.distance_covered} mètres")
-    else:
-        print("\nClassement actuel:")
-        for horse in sorted_horses:
-            print(horse)
-    print()
 
 
 class Horse:
@@ -168,7 +110,7 @@ class Horse:
         """
         if self.disqualified:
             return f"{self.name} (DQ)"
-        return f"{self.name}: Speed {self.speed}, Distance {self.distance_covered}"
+        return f"{self.name}: Distance {self.distance_covered} m"
 
 
 def normalize_string(s):
@@ -187,41 +129,104 @@ def normalize_string(s):
     return s
 
 
-def main():
-    """
-    Main function to run the trot race simulation.
-    """
-    print("Bienvenue au simulateur de course de trot attelé!")
+class RaceApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Simulation de Course Hippique")
 
-    num_horses = get_number_of_horses()
-    race_type = get_race_type()
+        self.setup_ui()
+        self.reset_game()
 
-    horse_names = random.sample(HORSE_NAMES, num_horses)
-    horses = [Horse(name) for name in horse_names]
+    def setup_ui(self):
+        self.canvas = tk.Canvas(self.root, width=800, height=600, bg='lightgreen')
+        self.canvas.pack()
 
-    time_elapsed = 0
-    finish_line = 2400
-    winners = []
+        self.title = tk.Label(self.root, text="Simulation de Course Hippique", font=('Arial', 18))
+        self.title.pack(pady=10)
 
-    while len(winners) < {'tiercé': 3, 'quarté': 4, 'quinté': 5}[race_type]:
-        input("Appuyez sur n'importe quelle touche pour avancer d'un tour...")
+        self.start_button = tk.Button(self.root, text="Démarrer la course", command=self.start_race)
+        self.start_button.pack(pady=10)
 
-        for horse in horses:
-            if horse not in winners:
+        self.next_round_button = tk.Button(self.root, text="Avancer au tour suivant", command=self.next_round,
+                                           state=tk.DISABLED)
+        self.next_round_button.pack(pady=10)
+
+        self.horse_labels = []
+        self.horses_positions = []
+        self.finish_line = self.canvas.create_line(700, 50, 700, 550, fill='red', width=2)
+
+        self.info_label = tk.Label(self.root, text="", font=('Arial', 12))
+        self.info_label.pack(pady=10)
+
+    def reset_game(self):
+        self.horses_positions = []
+        self.horse_labels = []
+        self.canvas.delete("all")
+        self.canvas.create_line(700, 50, 700, 550, fill='red', width=2)  # Recreate finish line
+
+        num_horses = random.randint(12, 20)  # Random number of horses
+        self.num_horses = num_horses
+
+        self.horses = random.sample(HORSE_NAMES, num_horses)
+
+        self.horses_instances = [Horse(name) for name in self.horses]
+        self.horses_distances = [0] * num_horses
+        self.horses_status = ['En course'] * num_horses
+        self.winners = []
+
+        for i, horse in enumerate(self.horses):
+            y = 50 + i * (500 / num_horses)
+            label = tk.Label(self.root, text=f"{horse}: 0 m", font=('Arial', 12))
+            label.place(x=10, y=y)
+            self.horse_labels.append(label)
+
+            self.horses_positions.append(self.canvas.create_rectangle(10, y - 10, 60, y + 10, fill='blue'))
+
+        self.info_label.config(text="Appuyez sur 'Démarrer la course' pour commencer.")
+
+    def start_race(self):
+        self.next_round_button.config(state=tk.NORMAL)
+        self.info_label.config(text="Appuyez sur 'Avancer au tour suivant' pour simuler chaque tour.")
+
+    def next_round(self):
+        if len(self.winners) >= (3 if self.num_horses >= 12 else 5):
+            self.display_results()
+            return
+
+        for i, horse in enumerate(self.horses_instances):
+            if horse not in self.winners:
                 horse.update_speed()
                 horse.advance()
+                self.horses_distances[i] = horse.distance_covered
 
-        time_elapsed += 10
-        print(f"\nTemps écoulé: {time_elapsed // 60}m {time_elapsed % 60}s")
+        for i, horse in enumerate(self.horses_instances):
+            if horse.distance_covered >= 2400 and horse not in self.winners:
+                self.winners.append(horse)
 
-        for horse in horses:
-            if horse.distance_covered >= finish_line and horse not in winners:
-                winners.append(horse)
+        self.update_ui()
 
-        display_ranking(horses, race_type)
+        if len(self.winners) >= (3 if self.num_horses >= 12 else 5):
+            self.display_results()
 
-    print("\nLa course est terminée!")
-    display_ranking(horses, race_type, winners)
+    def update_ui(self):
+        sorted_horses = sorted(self.horses_instances, key=lambda x: x.distance_covered, reverse=True)
+        for i, horse in enumerate(sorted_horses):
+            x = 10 + horse.distance_covered * (600 / 2400)
+            y = 50 + i * (500 / self.num_horses)
+            self.canvas.coords(self.horses_positions[self.horses.index(horse.name)], x, y - 10, x + 50, y + 10)
+            self.horse_labels[self.horses.index(horse.name)].config(text=f"{horse.name}: {horse.distance_covered} m")
+
+    def display_results(self):
+        results = "Classement des gagnants :\n" + "\n".join(
+            f"{i + 1}. {winner.name}: {winner.distance_covered} mètres" for i, winner in enumerate(self.winners))
+        messagebox.showinfo("Fin de la course", results)
+        self.info_label.config(text="La course est terminée!")
+
+
+def main():
+    root = tk.Tk()
+    app = RaceApp(root)
+    root.mainloop()
 
 
 if __name__ == "__main__":
