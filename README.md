@@ -26,7 +26,7 @@ avancer la course de tour en tour, à la suite d’un message du programme l’y
 Le tableau suivant indique les évolutions de la vitesse d’un cheval, 
 selon sa vitesse actuelle, et le jet d’un dé (DQ indique que le cheval est disqualifié).
 
-![alt text](img/Capture d’écran 2024-07-19 141439.png?raw=true)
+![alt text]([img/Capture d’écran 2024-07-19 141439.png](https://github.com/TonyB-FMS/SimuCourseHippik/tree/1c2341183aee34958d344ffa54aa4ef8b3c09589/img)?raw=true)
 
 Le tableau qui suit donne pour sa part la distance dont avance un cheval lors d’un tour 
 de jeu suivant sa vitesse.
