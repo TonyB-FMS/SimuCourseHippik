@@ -5,7 +5,10 @@ import unicodedata
 Module: Trot Race Simulation
 
 Description:
-    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé, 2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements based on dice rolls. The program displays the current standings and the results once the race is complete.
+    This module simulates a trot race with multiple horses. It allows users to select the type of race (1 for Tiercé,
+     2 for Quarté, 3 for Quinté), specify the number of horses, and run the race by simulating the horses' movements 
+     based on dice rolls. 
+     The program displays the current standings and the results once the race is complete.
 
 Author(s):
     [Your Name]
@@ -18,7 +21,8 @@ License:
     This software is licensed under the [License Name] License. See the LICENSE file for details.
 
 Usage:
-    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
+    Run this script to start the trot race simulation. Follow the prompts to choose the type of race, enter the number 
+    of horses, and advance through the race. Press 'Enter' to simulate each round of the race.
 
 Dependencies:
     - random
@@ -50,7 +54,8 @@ DISTANCE_BY_SPEED = {
 HORSE_NAMES = [
     "Alezan", "Blaze", "Clover", "Duchess", "Eclipse", "Fury", "Ginger", "Hurricane", "Ivy", "Jasmine",
     "Knight", "Lucky", "Majesty", "Noble", "Orion", "Pepper", "Quicksilver", "Ruby", "Starlight", "Thunder",
-    "Uno", "Victory", "Whirlwind", "Xena", "Yankee", "Zephyr"
+    "Uno", "Victory", "Whirlwind", "Xena", "Yankee", "Zephyr", "Arrow", "Bandit", "Champion", "Dancer",
+    "Electra", "Falcon", "Galaxy", "Hero", "Inferno", "Jupiter", "King", "Legend", "Mystery", "Neptune"
 ]
 
 
